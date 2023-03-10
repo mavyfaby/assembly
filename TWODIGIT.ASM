@@ -14,14 +14,8 @@ jmp start
 start:
 
     ; clear registers
-    xor ax,ax
-    xor bx,bx
-    xor cx,cx
-    xor dx,dx
-
-    ; clear screen and video graphics
-    mov ax,3
-    int 10h
+    call clear_r
+    call clear_v
 
     ; print first message
     lea dx,m1
@@ -33,13 +27,11 @@ start:
     int 21h
 
     ; store to n1
-    or al,30h
+    sub al,30h
     mov n1,al
 
-    ; print cr
-    lea dx,cr
-    mov ah,9
-    int 21h
+    ; new line
+    call n_line
 
     ; print second message
     lea dx,m2
@@ -51,35 +43,27 @@ start:
     int 21h
 
     ; store to n2
-    or al,30h
+    sub al,30h
     mov n2,al
 
-    ; print cr
-    lea dx,cr
-    mov ah,9
-    int 21h
+    ; new line
+    call n_line
 
-    ; clear ax and bx registers
-    xor ax,ax
-    xor bx,bx
-
-    ; store n1 and n2 to ax registers
-    mov al,n1
-    mov bl,n2
+    ; clear registers
+    call clear_r
 
     ; compute sum
+    mov al,n1
+    mov bl,n2
     add al,bl
 
     ; store sum in result variable
-    sub al,30h
     mov rs,al
-
-    ; clear ax, and bx registers
-    xor ax,ax
-    xor bx,bx
+    
+    ; clear registers
+    call clear_r
 
     ; compare results
-    sub rs,30h
     mov al,rs
     mov bl,9
     cmp al,bl
@@ -101,9 +85,8 @@ start:
 
 twodigit:
 
-    ; clear ax and bx registers
-    xor ax,ax
-    xor bx,bx
+    ; clear registers
+    call clear_r
 
     ; divide result by 10
     mov al,rs
@@ -135,3 +118,22 @@ twodigit:
 
     ; stop program
     int 20h
+
+n_line:
+    lea dx,cr
+    mov ah,9
+    int 21h
+    ret
+
+clear_r:
+    xor ax,ax
+    xor ax,ax
+    xor cx,cx
+    xor dx,dx
+    ret
+    
+clear_v:
+    mov ax,3
+    int 10h
+    ret
+    
